@@ -128,10 +128,8 @@ export default {
   },
   mounted() {
     if (this.userData) {
-      this.updateData = {
-        name: this.userData.fullName,
-        email: this.userData.email
-      }
+      this.updateData.name = this.userData.fullName
+      this.updateData.email = this.userData.email
     }
   },
   computed: {
