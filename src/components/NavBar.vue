@@ -5,7 +5,7 @@
         <span class="text-xl font-bold text-gray-800">Vinny</span>
       </router-link>
 
-      <div class="flex flex-col gap-y-[10px]">
+      <div class="flex gap-[10px]">
         <router-link to="/login">
           <button
             class="bg-blue-300 w-full text-white py-2 px-4 rounded hover:bg-blue-400 transition duration-300"

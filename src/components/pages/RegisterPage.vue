@@ -51,7 +51,7 @@
               <label
                 for="confirm-password"
                 class="block mb-2 text-sm font-medium text-gray-900"
-                >Пароль</label
+                >Подтверждение пароля</label
               >
               <input
                 v-model="formData.confirmPassword"
