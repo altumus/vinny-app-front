@@ -4,9 +4,12 @@
 
     <!-- Контент -->
     <div class="w-full flex justify-between gap-[20px] px-[150px] py-[50px]">
-      <div class="w-full flex flex-col gap-[20px]">
+      <div v-if="posts.length" class="w-full flex flex-col gap-[20px]">
         <PostCard :post="post" v-for="post in posts" :key="post.id" />
       </div>
+      <p v-else class="text-center font-[700] text-[30px]">
+        Список постов пуст
+      </p>
       <TagsList :tags="tags" />
     </div>
   </div>
@@ -24,7 +27,8 @@ export default {
   computed: {
     posts() {
       // мок данные потом подогнать надо под овтет серва
-      return [
+
+      const posts = [
         {
           id: "123123",
           text: "текст поста",
@@ -49,7 +53,7 @@ export default {
           id: "123123",
           text: "текст поста",
           title: "заголовок поста",
-          tags: ["pizdec", "aga"],
+          tags: ["pizdec"],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           viewsCount: 123,
@@ -69,7 +73,7 @@ export default {
           id: "123123",
           text: "текст поста",
           title: "заголовок поста",
-          tags: ["pizdec", "aga"],
+          tags: ["aga"],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           viewsCount: 123,
@@ -86,11 +90,17 @@ export default {
           }
         }
       ]
+      if (this.$route.query.tag) {
+        return posts.filter((post) => post.tags.includes(this.$route.query.tag))
+      }
+      return posts
     },
     tags() {
       // мок данные потом подогнать надо под овтет серва
+      // теги по идее вообще можно нигде не хранить но сказать что хранишь
+      // и придумать просто 5 типо часто используемых чтобы по ним фильтр был
 
-      return ["react", "vue", "pizda", "angular"]
+      return ["react", "vue", "pizdec", "aga"]
     }
   }
 }

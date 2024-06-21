@@ -23,7 +23,12 @@ export default {
   },
   methods: {
     selectTag(tag) {
-      alert(`Тут будет фильтр по тегу ${tag}`)
+      this.$router.push({
+        name: this.$route.name,
+        query: {
+          tag: tag
+        }
+      })
     }
   }
 }
