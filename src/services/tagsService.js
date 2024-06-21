@@ -29,26 +29,9 @@ export async function removeTag(tagId) {
   }
 }
 
-export async function getAllUserTags(userId) {
+export async function getAllTags() {
   try {
-    const response = await apiClient.get("get-user-tags", {
-      params: {
-        creatorId: userId
-      }
-    })
-    return response.data
-  } catch (error) {
-    return Promise.reject(error)
-  }
-}
-
-export async function getAllTags(userId) {
-  try {
-    const response = await apiClient.get("all-tags", {
-      params: {
-        creatorId: userId
-      }
-    })
+    const response = await apiClient.get("all-tags")
     return response.data
   } catch (error) {
     return Promise.reject(error)
