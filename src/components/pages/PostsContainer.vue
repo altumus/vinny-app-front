@@ -4,7 +4,9 @@
 
     <!-- Контент -->
     <div class="w-full flex justify-between gap-[20px] px-[150px] py-[50px]">
-      <PostCard :post="post" v-for="post in posts" :key="post.id" />
+      <div class="w-full flex flex-col gap-[20px]">
+        <PostCard :post="post" v-for="post in posts" :key="post.id" />
+      </div>
       <TagsList :tags="tags" />
     </div>
   </div>
@@ -23,6 +25,46 @@ export default {
     posts() {
       // мок данные потом подогнать надо под овтет серва
       return [
+        {
+          id: "123123",
+          text: "текст поста",
+          title: "заголовок поста",
+          tags: ["pizdec", "aga"],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          viewsCount: 123,
+          imageUrl:
+            "https://cdnstatic.rg.ru/uploads/images/162/37/74/1_a04fbaa5.jpg",
+          user: {
+            id: "123",
+            email: "kaka@gmail.com",
+            fullName: "Егор Пантелеев",
+            avatarUrl:
+              "https://cdnstatic.rg.ru/uploads/images/162/37/74/1_a04fbaa5.jpg",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }
+        },
+        {
+          id: "123123",
+          text: "текст поста",
+          title: "заголовок поста",
+          tags: ["pizdec", "aga"],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          viewsCount: 123,
+          imageUrl:
+            "https://cdnstatic.rg.ru/uploads/images/162/37/74/1_a04fbaa5.jpg",
+          user: {
+            id: "123",
+            email: "kaka@gmail.com",
+            fullName: "Егор Пантелеев",
+            avatarUrl:
+              "https://cdnstatic.rg.ru/uploads/images/162/37/74/1_a04fbaa5.jpg",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }
+        },
         {
           id: "123123",
           text: "текст поста",
