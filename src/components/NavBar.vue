@@ -20,6 +20,13 @@
             Регистрация
           </button>
         </router-link>
+        <router-link to="/account">
+          <button
+            class="w-full bg-green-300 text-gray-800 py-2 px-4 rounded hover:bg-green-400 transition duration-300"
+          >
+            Профиль
+          </button>
+        </router-link>
       </div>
     </div>
   </nav>
