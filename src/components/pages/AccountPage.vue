@@ -74,12 +74,15 @@
           class="shadow-md rounded-[8px] group flex items-center h-[50px] justify-between hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200"
         >
           <span>{{ post.name }}</span>
-          <div class="hidden group-hover:flex gap-[5px]">
-            <el-button @click="gotoPost(post.id)">Перейти к посту</el-button>
+          <div class="hidden group-hover:flex items-center gap-[5px]">
+            <el-button size="small" @click="gotoPost(post.id)"
+              >Перейти к посту</el-button
+            >
             <el-button
               type="danger"
+              size="small"
               @click="deletePost(post.id)"
-              class="hidden group-hover:flex hover:bg-gray-400 w-[24px] !m-0 h-[24px] justify-center items-center rounded-[4px] transition duration-200 text-red-500"
+              class="hidden group-hover:flex hover:bg-gray-400 w-[24px] !m-0 h-[24px] justify-center items-center rounded-[4px] transition duration-200 text-white"
             >
               <mdicon name="delete" size="24px" />
             </el-button>
