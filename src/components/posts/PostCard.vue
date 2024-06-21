@@ -25,7 +25,16 @@
           #{{ tag }}
         </span>
       </div>
-      <div class="flex justify-between items-center mt-[20px]">
+      <div class="flex mt-[10px] justify-start">
+        <el-button
+          @click="gotoFullPost"
+          type="primary"
+          class="w-[200px] !rounded-[20px]"
+        >
+          Подробнее...
+        </el-button>
+      </div>
+      <div class="flex justify-between items-center mt-[10px]">
         <div class="flex flex-row gap-[5px] items-center">
           <img
             class="w-[24px] h-[24px] object-cover rounded-[100%]"
@@ -68,6 +77,11 @@ export default {
     },
     updatedAt() {
       return new Date(this.post.updatedAt).toLocaleString()
+    }
+  },
+  methods: {
+    gotoFullPost() {
+      this.$router.push(`/posts/${this.post.id}`)
     }
   }
 }

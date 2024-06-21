@@ -1,21 +1,27 @@
 import AccountPage from "@/components/pages/AccountPage.vue"
-import RegisterPage from "@/components/pages/RegisterPage.vue"
 import LoginPage from "@/components/pages/LoginPage.vue"
 import PostCreation from "@/components/pages/PostCreation"
 import PostDetails from "@/components/pages/PostDetails.vue"
 import PostsContainer from "@/components/pages/PostsContainer.vue"
+import RegisterPage from "@/components/pages/RegisterPage.vue"
+import FullPost from "@/components/posts/FullPost.vue"
 import { createRouter, createWebHistory } from "vue-router"
 
 const routes = [
   {
     path: "/",
     name: "HomePage",
-    redirect: "/main"
+    redirect: "/posts"
   },
   {
-    path: "/main",
+    path: "/posts",
     name: "PostsPage",
     component: PostsContainer
+  },
+  {
+    path: "/posts/:id", //чет тут children не хочет нормально работать сделал по тупому
+    name: "fullPost",
+    component: FullPost
   },
   {
     path: "/account",

@@ -1,7 +1,7 @@
 <template>
   <nav class="bg-blue-200 p-4 shadow-md">
     <div class="container mx-auto flex justify-between items-center">
-      <router-link to="/main">
+      <router-link to="/posts">
         <span class="text-xl font-bold text-gray-800">Vinny</span>
       </router-link>
 
