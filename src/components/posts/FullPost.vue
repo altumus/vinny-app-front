@@ -36,8 +36,15 @@
         />
         <p class="font-[700] text-[13px]">{{ post.user.fullName }}</p>
       </div>
-      <p class="my-[20px]">{{ post.text }}</p>
-
+      <p v-if="!isEdit" class="my-[20px]">{{ post.text }}</p>
+      <Editor @save="saveText" v-else :text="post.text" />
+      <el-button
+        type="success"
+        v-if="!isEdit"
+        @click="isEdit = true"
+        class="w-[200px]"
+        >Редактировать статью
+      </el-button>
       <div class="flex mt-[20px] gap-[5px] items-center">
         <mdicon name="comment-outline" />
         <p>Комментарии</p>
@@ -100,10 +107,16 @@
 </template>
 
 <script>
+import Editor from "../common/Editor.vue"
+
 export default {
+  components: {
+    Editor
+  },
   data() {
     return {
-      commentText: ""
+      commentText: "",
+      isEdit: false
     }
   },
   computed: {
@@ -187,6 +200,11 @@ export default {
     }
   },
   methods: {
+    saveText(text) {
+      console.log(text)
+      alert("update post text")
+      this.isEdit = false
+    },
     createComment() {
       if (!this.commentText.length) return
       const data = {
