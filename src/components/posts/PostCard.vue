@@ -14,7 +14,7 @@
       <p class="font-[700] text-[21px] line-clamp-2">{{ post.title }}</p>
       <div class="flex gap-[5px] items-center">
         <mdicon name="calendar-check-outline" size="24px" color="black" />
-        <p class="font-[700] text-[13px]">Published {{ createdAt }}</p>
+        <p class="font-[700] text-[13px]">Опубликовано: {{ createdAt }}</p>
       </div>
       <div class="flex flex-wrap gap-[5px]">
         <span

@@ -2,7 +2,7 @@
   <div
     class="w-full md:w-fit min-w-[250px] p-[20px] h-fit flex flex-col gap-[5px] rounded-[8px] shadow-lg border-[2px] border-gray-700 overflow-hidden"
   >
-    <p class="font-[700] text-[19px]">Tags</p>
+    <p class="font-[700] text-[19px]">Теги</p>
     <div
       @click="selectTag(tag)"
       v-for="(tag, idx) in tags"
