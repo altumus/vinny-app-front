@@ -31,6 +31,7 @@ export default {
       this.$router.push({
         name: this.$route.name,
         query: {
+          ...this.$route.query,
           tag: val
         }
       })

@@ -4,13 +4,12 @@
   >
     <img
       v-if="post.imageUrl"
-      class="w-[100%] h-[400px] object-cover rounded-t-[8px]"
+      class="w-[100%] h-[550px] object-cover rounded-[8px]"
       :src="post.imageUrl"
       alt="post img"
     />
     <div
-      style="border: 2px solid gray"
-      class="bg-gray-100 transition duration-200 p-[10px] flex flex-col rounded-b-[8px] border-gray-700 gap-[8px]"
+      class="bg-gray-100 transition duration-200 p-[10px] flex flex-col rounded-[8px] border-gray-700 gap-[8px]"
     >
       <p class="font-[700] text-[30px] line-clamp-2">{{ post.title }}</p>
       <div class="flex gap-[5px] items-center">
