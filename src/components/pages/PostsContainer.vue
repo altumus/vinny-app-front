@@ -20,7 +20,12 @@
       <p v-else class="text-center font-[700] text-[30px]">
         Список постов пуст
       </p>
-      <TagsList :tags="tags" />
+      <div class="flex flex-col gap-[20px]">
+        <TagsList :tags="tags" />
+        <el-button @click="gotoCreatePage" type="success" size="large"
+          >СОЗДАТЬ ПУБЛИКАЦИЮ</el-button
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -126,6 +131,9 @@ export default {
     }
   },
   methods: {
+    gotoCreatePage() {
+      this.$router.push("/posts/new")
+    },
     handleSearch() {
       if (this.searchValue.length) {
         this.$router.replace({

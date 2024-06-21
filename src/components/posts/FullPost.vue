@@ -47,7 +47,7 @@
         />
         <p class="font-[700] text-[13px]">{{ post.user.fullName }}</p>
       </div>
-      <p v-if="!isEdit" class="my-[20px]">{{ post.text }}</p>
+      <div v-if="!isEdit" class="my-[20px]" v-html="post.text" />
       <Editor @save="saveText" v-else :text="post.text" />
       <el-button
         type="success"
