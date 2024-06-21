@@ -13,10 +13,11 @@
       class="bg-gray-100 transition duration-200 p-[10px] flex flex-col rounded-b-[8px] border-gray-700 gap-[8px]"
     >
       <p class="font-[700] text-[30px] line-clamp-2">{{ post.title }}</p>
-      <p>{{ post.text }}</p>
       <div class="flex gap-[5px] items-center">
         <mdicon name="calendar-check-outline" size="24px" color="black" />
-        <p class="font-[700] text-[13px]">Опубликовано: {{ createdAt }}</p>
+        <p class="font-[700] text-[13px]">
+          Опубликовано {{ createdAt }} | {{ post.viewsCount }} просмотра
+        </p>
       </div>
       <div class="flex flex-wrap gap-[5px]">
         <span
@@ -35,6 +36,8 @@
         />
         <p class="font-[700] text-[13px]">{{ post.user.fullName }}</p>
       </div>
+      <p class="my-[20px]">{{ post.text }}</p>
+
       <div class="flex mt-[20px] gap-[5px] items-center">
         <mdicon name="comment-outline" />
         <p>Комментарии</p>
@@ -107,7 +110,7 @@ export default {
     post() {
       return {
         id: "123123",
-        text: "текст поста",
+        text: "  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Perferendis, enim minus. Eaque animi quos pariatur est tempora maiores, quasi accusamus et libero temporibus maxime reprehenderit dicta error nemo nulla ab!",
         title: "заголовок поста",
         tags: ["pizdec", "aga"],
         createdAt: new Date().toISOString(),
@@ -127,11 +130,11 @@ export default {
       }
     },
     comments() {
-      return [
+      const comments = [
         {
           id: "123",
           text: "всем привет",
-          createdAt: new Date().toLocaleDateString(),
+          createdAt: new Date("2024-03-01").toLocaleDateString(),
           user: {
             id: "123",
             email: "kaka@gmail.com",
@@ -145,7 +148,7 @@ export default {
         {
           id: "123",
           text: "всем привет",
-          createdAt: new Date().toLocaleDateString(),
+          createdAt: new Date("2024-01-01").toLocaleDateString(),
           user: {
             id: "123",
             email: "kaka@gmail.com",
@@ -159,7 +162,7 @@ export default {
         {
           id: "123",
           text: "всем привет",
-          createdAt: new Date().toLocaleDateString(),
+          createdAt: new Date("2024-02-01").toLocaleDateString(),
           user: {
             id: "123",
             email: "kaka@gmail.com",
@@ -171,12 +174,16 @@ export default {
           }
         }
       ]
+      return comments.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
     },
     createdAt() {
       return new Date(this.post.createdAt).toLocaleDateString()
     },
     updatedAt() {
-      return new Date(this.post.updatedAt).toLocaleString()
+      return new Date(this.post.updatedAt).toLocaleDateString()
     }
   },
   methods: {
@@ -188,6 +195,7 @@ export default {
       }
       // запрос тут
       alert("comment created")
+      this.commentText = ""
     }
   }
 }
