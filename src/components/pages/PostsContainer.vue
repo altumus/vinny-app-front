@@ -3,16 +3,53 @@
     <!-- Навигационная панель -->
 
     <!-- Контент -->
-    <div class="container mx-auto p-4">
-      <!-- Блок поста -->
-      <div class="bg-white p-6 rounded-lg shadow-lg">
-        <h2 class="font-bold text-lg mb-2 text-gray-800">Заголовок поста</h2>
-        <p class="text-gray-600">Текст поста...</p>
-      </div>
+    <div class="w-full flex justify-between gap-[20px] px-[150px] py-[50px]">
+      <PostCard :post="post" v-for="post in posts" :key="post.id" />
+      <TagsList :tags="tags" />
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+import PostCard from "../posts/PostCard.vue"
+import TagsList from "../tags/TagsList.vue"
+
+export default {
+  components: {
+    PostCard,
+    TagsList
+  },
+  computed: {
+    posts() {
+      // мок данные потом подогнать надо под овтет серва
+      return [
+        {
+          id: "123123",
+          text: "текст поста",
+          title: "заголовок поста",
+          tags: ["pizdec", "aga"],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          viewsCount: 123,
+          imageUrl:
+            "https://cdnstatic.rg.ru/uploads/images/162/37/74/1_a04fbaa5.jpg",
+          user: {
+            id: "123",
+            email: "kaka@gmail.com",
+            fullName: "Егор Пантелеев",
+            avatarUrl:
+              "https://cdnstatic.rg.ru/uploads/images/162/37/74/1_a04fbaa5.jpg",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }
+        }
+      ]
+    },
+    tags() {
+      // мок данные потом подогнать надо под овтет серва
+
+      return ["react", "vue", "pizda", "angular"]
+    }
+  }
+}
 </script>
