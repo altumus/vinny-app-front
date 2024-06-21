@@ -1,7 +1,19 @@
 <template>
   <div
-    class="w-full py-[50px] px-[100px] min-w-[350px] flex flex-col overflow-hidden"
+    class="w-full py-[50px] relative px-[100px] min-w-[350px] flex flex-col overflow-hidden"
   >
+    <label
+      for="fileInput"
+      class="absolute cursor-pointer hover:text-blue-300 hover:transition duration-200 text-white bg-black/50 p-[5px] rounded-[4px]"
+    >
+      <mdicon name="pencil" size="35px" color="gray" />
+    </label>
+    <input
+      class="hidden"
+      id="fileInput"
+      type="file"
+      @change="handleChangePostImage($event)"
+    />
     <img
       v-if="post.imageUrl"
       class="w-[100%] h-[550px] object-cover rounded-[8px]"
@@ -203,6 +215,11 @@ export default {
       console.log(text)
       alert("update post text")
       this.isEdit = false
+    },
+    handleChangePostImage(event) {
+      const file = event.target.files[0]
+      console.log(file)
+      alert("handle file change")
     },
     createComment() {
       if (!this.commentText.length) return
