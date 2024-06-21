@@ -1,4 +1,6 @@
 import AccountPage from "@/components/pages/AccountPage.vue"
+import RegisterPage from "@/components/pages/RegisterPage.vue"
+import LoginPage from "@/components/pages/LoginPage.vue"
 import PostCreation from "@/components/pages/PostCreation"
 import PostDetails from "@/components/pages/PostDetails.vue"
 import PostsContainer from "@/components/pages/PostsContainer.vue"
@@ -29,6 +31,16 @@ const routes = [
     path: "/post-creation",
     name: "PostCreation",
     component: PostCreation
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: LoginPage
+  },
+  {
+    path: "/register",
+    name: "register",
+    component: RegisterPage
   }
 ]
 
