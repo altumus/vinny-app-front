@@ -1,14 +1,13 @@
 import apiClient from "@/utils/axiosUtil"
 
-export async function createPost(content, title, creatorId, tagId) {
+export async function createPost(content, title, creatorId, cover) {
   try {
+    console.log("content", content, "title", title, "creator", creatorId)
     const response = await apiClient.post("create-post", {
-      data: {
-        content: content,
-        title: title,
-        creatorId: creatorId,
-        tagId: tagId
-      }
+      content: content,
+      title: title,
+      creatorId: creatorId,
+      cover: cover
     })
 
     return response.data
@@ -31,16 +30,22 @@ export async function deletePost(postId) {
   }
 }
 
-export async function updatePost(postId, content, dislikes, likes, title) {
+export async function updatePost(
+  postId,
+  content,
+  dislikes,
+  likes,
+  title,
+  cover
+) {
   try {
     const response = await apiClient.patch("update-post", {
-      data: {
-        id: postId,
-        content: content,
-        dislikes: dislikes,
-        likes: likes,
-        title: title
-      }
+      id: postId,
+      content: content,
+      dislikes: dislikes,
+      likes: likes,
+      title: title,
+      cover: cover
     })
 
     return response.data
@@ -52,6 +57,19 @@ export async function updatePost(postId, content, dislikes, likes, title) {
 export async function getAllPosts() {
   try {
     const response = await apiClient.get("all-posts")
+    return response.data
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
+
+export async function getPostById(postId) {
+  try {
+    const response = await apiClient.get("post-by-id", {
+      params: {
+        postId: postId
+      }
+    })
     return response.data
   } catch (error) {
     return Promise.reject(error)

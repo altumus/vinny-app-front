@@ -1,6 +1,6 @@
 export function userLogin(email, hash) {
   localStorage.setItem("userEmail", email)
-  localStorage.set("userHash", hash)
+  localStorage.setItem("userHash", hash)
 }
 
 export function userLogout() {

@@ -1,10 +1,10 @@
 import AccountPage from "@/components/pages/AccountPage.vue"
 import LoginPage from "@/components/pages/LoginPage.vue"
-import CreatePost from "@/components/posts/CreatePost.vue"
 import PostCreation from "@/components/pages/PostCreation"
 import PostDetails from "@/components/pages/PostDetails.vue"
 import PostsContainer from "@/components/pages/PostsContainer.vue"
 import RegisterPage from "@/components/pages/RegisterPage.vue"
+import CreatePost from "@/components/posts/CreatePost.vue"
 import FullPost from "@/components/posts/FullPost.vue"
 import { createRouter, createWebHistory } from "vue-router"
 
@@ -20,7 +20,7 @@ const routes = [
     component: PostsContainer
   },
   {
-    path: "/posts/:id", //чет тут children не хочет нормально работать сделал по тупому
+    path: "/posts/:id",
     name: "fullPost",
     component: FullPost
   },

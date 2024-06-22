@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex w-full items-start h-full py-[20px] overflow-hidden justify-between gap-[20px] px-[100px]"
+    class="flex-col sm:flex-row flex w-full items-start h-full py-[20px] overflow-hidden justify-between gap-[20px] px-[100px]"
   >
     <div
       style="border: 1px solid gray"
@@ -23,38 +23,42 @@
           class="hidden"
           type="file"
         />
-        <img
-          class="w-full h-full object-cover"
-          :src="userData.avatarUrl"
-          alt="user avatar"
+
+        <UserAvatar
+          class="w-[300px] h-[300px] rounded-full"
+          :src="formattedUser.avatar"
         />
       </div>
-      <div class="flex flex-col justify-between h-full">
+      <div class="flex flex-col justify-between h-full w-full gap-y-[30px]">
         <div
-          class="text-[25px] text-left flex justify-start gap-[10px] flex-col"
+          class="text-[25px] text-left flex justify-start gap-[20px] flex-col"
         >
           <div class="flex items-center gap-[5px]">
             <mdicon name="account-outline" size="32px" color="black" />
-            <p>{{ userData?.fullName }}</p>
+            <p class="max-w-[350px] truncate">{{ formattedUser?.name }}</p>
           </div>
           <div class="flex items-center gap-[5px]">
             <mdicon name="email-outline" size="32px" color="black" />
-            <p>{{ userData?.email }}</p>
+            <p class="max-w-[350px] truncate">{{ formattedUser?.email }}</p>
           </div>
           <div class="flex items-center gap-[5px]">
             <mdicon name="calendar-outline" size="32px" color="black" />
-            <p>{{ userData?.createdAt }}</p>
+            <p class="max-w-[350px] truncate">{{ formattedUser?.createdAt }}</p>
           </div>
         </div>
-        <el-button
-          @click="showUpdateDialog = true"
-          class="w-full my-[10px]"
-          type="success"
-          >Изменить данные</el-button
-        >
-        <el-button @click="logout" class="w-full !m-0" type="danger"
-          >Выход</el-button
-        >
+
+        <div class="flex flex-col w-full">
+          <el-button
+            @click="showUpdateDialog = true"
+            class="w-full my-[10px]"
+            type="success"
+          >
+            Изменить данные
+          </el-button>
+          <el-button @click="logout" class="w-full !m-0" type="danger">
+            Выход
+          </el-button>
+        </div>
       </div>
     </div>
     <div
@@ -66,7 +70,7 @@
         <p>Мои публикации</p>
       </div>
       <div
-        class="h-full w-full flex flex-col gap-[10px] overflow-auto py-[10px]"
+        class="h-full max-h-[500px] w-full flex flex-col gap-[10px] overflow-y-auto py-[10px]"
       >
         <div
           v-for="post in posts"
@@ -75,9 +79,9 @@
         >
           <span>{{ post.name }}</span>
           <div class="hidden group-hover:flex items-center gap-[5px]">
-            <el-button size="small" @click="gotoPost(post.id)"
-              >Перейти к посту</el-button
-            >
+            <el-button size="small" @click="gotoPost(post.id)">
+              Перейти к посту
+            </el-button>
             <el-button
               type="danger"
               size="small"
@@ -91,6 +95,7 @@
       </div>
     </div>
   </div>
+
   <el-dialog v-model="showUpdateDialog" title="Изменить данные" width="500">
     <div class="w-full flex flex-col gap-[10px]">
       <el-input v-model="updateData.email" placeholder="Email" />
@@ -114,8 +119,16 @@
 
 <script>
 import { ref, computed } from "vue"
+import { mapStores } from "pinia"
+import { useUserStore } from "@/stores/userStore"
+import * as Utils from "@/utils/userHandler"
+
+import UserAvatar from "@/components/common/UserAvatar.vue"
 
 export default {
+  components: {
+    UserAvatar
+  },
   data() {
     return {
       showUpdateDialog: false,
@@ -133,6 +146,18 @@ export default {
     }
   },
   computed: {
+    ...mapStores(useUserStore),
+    currentUser() {
+      return this.usersStore.currentUser
+    },
+    formattedUser() {
+      const data = {
+        ...this.currentUser,
+        createdAt: new Date().toLocaleDateString()
+      }
+
+      return data
+    },
     posts() {
       return [
         {
@@ -219,8 +244,10 @@ export default {
       this.$router.push(`/posts/${id}`)
     },
     logout() {
-      if (window.confirm("Вы дейтсвительно хотите выйти?"))
-        localstorage.removeItem("access_token")
+      if (window.confirm("Вы дейтсвительно хотите выйти?")) {
+        this.usersStore.logoutLocally()
+        this.$router.push("/posts")
+      }
     }
   }
 }

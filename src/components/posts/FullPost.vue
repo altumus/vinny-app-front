@@ -1,13 +1,28 @@
 <template>
+  <PageLoader v-if="isLoading" />
   <div
+    v-else
     class="w-full py-[50px] relative px-[100px] min-w-[350px] flex flex-col overflow-hidden"
   >
     <label
+      v-if="currentPost.cover && canEdit"
       for="fileInput"
       class="absolute cursor-pointer hover:text-blue-300 hover:transition duration-200 text-white bg-black/50 p-[5px] rounded-[4px]"
     >
       <mdicon name="pencil" size="35px" color="gray" />
     </label>
+    <div
+      v-if="canEdit && !currentPost.cover"
+      class="flex items-center gap-x-[10px] mb-[20px]"
+    >
+      <span class="text-[24px] font-bold">Обложка</span>
+      <label
+        for="fileInput"
+        class="cursor-pointer hover:text-blue-300 hover:transition duration-200 text-white bg-black/50 p-[5px] rounded-[4px]"
+      >
+        <mdicon name="pencil" size="24px" color="gray" />
+      </label>
+    </div>
     <input
       class="hidden"
       id="fileInput"
@@ -15,15 +30,15 @@
       @change="handleChangePostImage($event)"
     />
     <img
-      v-if="post.imageUrl"
+      v-if="currentPost.cover"
       class="w-[100%] h-[550px] object-cover rounded-[8px]"
-      :src="post.imageUrl"
+      :src="currentPost.cover"
       alt="post img"
     />
     <div
       class="bg-gray-100 transition duration-200 p-[10px] flex flex-col rounded-[8px] border-gray-700 gap-[8px]"
     >
-      <p class="font-[700] text-[30px] line-clamp-2">{{ post.title }}</p>
+      <p class="font-[700] text-[30px] line-clamp-2">{{ currentPost.title }}</p>
       <div class="flex gap-[5px] items-center">
         <mdicon name="calendar-check-outline" size="24px" color="black" />
         <p class="font-[700] text-[13px]">
@@ -40,21 +55,21 @@
         </span>
       </div>
       <div class="flex flex-row gap-[5px] items-center">
-        <img
+        <UserAvatar
           class="w-[24px] h-[24px] object-cover rounded-[100%]"
-          :src="post.user.avatarUrl"
-          alt="avatar"
+          :src="currentPost.creator.avatar"
         />
-        <p class="font-[700] text-[13px]">{{ post.user.fullName }}</p>
+        <p class="font-[700] text-[13px]">{{ currentPost.creator.name }}</p>
       </div>
-      <div v-if="!isEdit" class="my-[20px]" v-html="post.text" />
-      <Editor @save="saveText" v-else :text="post.text" />
+      <div v-if="!isEdit" class="my-[20px]" v-html="currentPost.content" />
+      <Editor @save="saveText" v-else :text="currentPost.content" />
       <el-button
         type="success"
-        v-if="!isEdit"
+        v-if="!isEdit && canEdit"
         @click="isEdit = true"
         class="w-[200px]"
-        >Редактировать статью
+      >
+        Редактировать статью
       </el-button>
       <div class="flex mt-[20px] gap-[5px] items-center">
         <mdicon name="comment-outline" />
@@ -66,9 +81,9 @@
         type="textarea"
       />
       <div class="flex w-full justify-end">
-        <el-button @click="createComment" class="w-[150px]" type="primary"
-          >Отправить</el-button
-        >
+        <el-button @click="createComment" class="w-[150px]" type="primary">
+          Отправить
+        </el-button>
       </div>
       <div
         v-for="comment in comments"
@@ -118,25 +133,63 @@
 </template>
 
 <script>
+import { mapStores } from "pinia"
 import Editor from "../common/Editor.vue"
+import { usePostsStore } from "@/stores/postsStore"
+import UserAvatar from "@/components/common/UserAvatar.vue"
+import PageLoader from "@/components/PageLoader.vue"
+import { useUserStore } from "@/stores/userStore"
 
 export default {
   components: {
-    Editor
+    Editor,
+    UserAvatar,
+    PageLoader
   },
   data() {
     return {
       commentText: "",
-      isEdit: false
+      isEdit: false,
+      isLoading: true,
+      content: "",
+      cover: null
     }
   },
+  async mounted() {
+    let postId
+    this.isLoading = true
+    try {
+      postId = Number(this.$route.params.id)
+    } catch (error) {
+      this.$router.push("/posts")
+    }
+
+    await this.postsStore.getPostById(postId)
+    this.isLoading = false
+  },
   computed: {
+    ...mapStores(usePostsStore, useUserStore),
+    postId() {
+      return this.$route.params.id
+    },
+    canEdit() {
+      return this.postCreator.id === this.currentUser?.id
+    },
+    currentUser() {
+      return this.usersStore.currentUser
+    },
+    currentPost() {
+      return this.postsStore.currentPost
+    },
+    postCreator() {
+      return this.currentPost.creator
+    },
     post() {
       return {
         id: "123123",
         text: "  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Perferendis, enim minus. Eaque animi quos pariatur est tempora maiores, quasi accusamus et libero temporibus maxime reprehenderit dicta error nemo nulla ab!",
         title: "заголовок поста",
-        tags: ["pizdec", "aga"],
+        tags: ["some test tag", "label tag"],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         viewsCount: 123,
@@ -214,12 +267,39 @@ export default {
     saveText(text) {
       console.log(text)
       alert("update post text")
+      this.content = text
       this.isEdit = false
+      this.updatePost()
     },
     handleChangePostImage(event) {
       const file = event.target.files[0]
-      console.log(file)
-      alert("handle file change")
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = function () {
+        this.cover = reader.result
+      }
+      reader.onerror = function (error) {
+        console.log("Error: ", error)
+      }
+      this.updatePost()
+    },
+    updatePost() {
+      const data = {
+        postId: this.postId,
+        content: this.content,
+        dislikes: 0,
+        likes: 0,
+        title: this.currentPost.title,
+        cover: this.currentPost.cover
+      }
+      return this.postsStore.updatePost(
+        data.postId,
+        data.content,
+        data.dislikes,
+        data.likes,
+        data.title,
+        data.cover
+      )
     },
     createComment() {
       if (!this.commentText.length) return

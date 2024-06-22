@@ -49,7 +49,10 @@
 </template>
 
 <script>
+import { mapStores } from "pinia"
 import Editor from "../common/Editor.vue"
+import { usePostsStore } from "@/stores/postsStore"
+import { useUserStore } from "@/stores/userStore"
 
 export default {
   components: {
@@ -65,17 +68,20 @@ export default {
       }
     }
   },
-  computed: {},
+  computed: {
+    ...mapStores(usePostsStore, useUserStore),
+    currentUser() {
+      return this.usersStore.currentUser
+    }
+  },
   methods: {
     saveText(text) {
       this.postData.text = text
       this.isEdit = false
     },
-    savePost() {
-      alert("save post")
-      const data = this.postData
-      console.log(data)
-      this.$router.push("/posts")
+    async savePost() {
+      await this.createPost()
+      // this.$router.push("/posts")
     },
     handleChangePostImage(event) {
       const file = event.target.files[0]
@@ -86,6 +92,20 @@ export default {
         }
         reader.readAsDataURL(file)
       }
+    },
+    async createPost() {
+      const data = {
+        content: this.postData.text,
+        title: this.postData.title,
+        creatorId: this.currentUser.id,
+        cover: this.postData.image
+      }
+      await this.postsStore.createPost(
+        data.content,
+        data.title,
+        data.creatorId,
+        data.cover
+      )
     }
   }
 }

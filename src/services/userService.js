@@ -31,10 +31,8 @@ export async function removeUser(userId) {
 export async function login(email, hash) {
   try {
     const response = await apiClient.post("login", {
-      data: {
-        email: email,
-        hash: hash
-      }
+      email: email,
+      hash: hash
     })
 
     return response.data

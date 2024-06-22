@@ -2,7 +2,11 @@
   <div class="min-h-screen bg-gray-100">
     <!-- Навигационная панель -->
     <!-- Контент -->
-    <div class="w-full flex justify-between gap-[20px] px-[150px] py-[50px]">
+    <PageLoader v-if="isPageLoading" />
+    <div
+      v-else
+      class="w-full flex justify-between gap-[20px] px-[150px] py-[50px]"
+    >
       <div v-if="posts.length" class="w-full flex flex-col gap-[20px]">
         <div class="flex gap-[5px]">
           <el-input
@@ -11,16 +15,16 @@
             size="large"
             placeholder="Поиск публикаций..."
           />
-          <el-button @click="handleSearch" size="large" type="primary"
-            >Найти</el-button
-          >
+          <el-button @click="handleSearch" size="large" type="primary">
+            Найти
+          </el-button>
         </div>
-        <PostCard :post="post" v-for="post in posts" :key="post.id" />
+        <PostCard :post="post" v-for="post in allPosts" :key="post.id" />
       </div>
       <p v-else class="text-center font-[700] text-[30px]">
         Список постов пуст
       </p>
-      <div class="flex flex-col gap-[20px]">
+      <div v-if="currentUser" class="flex flex-col gap-[20px]">
         <TagsList :tags="tags" />
         <el-button @click="gotoCreatePage" type="success" size="large"
           >СОЗДАТЬ ПУБЛИКАЦИЮ</el-button
@@ -31,20 +35,38 @@
 </template>
 
 <script>
+import { mapStores } from "pinia"
 import PostCard from "../posts/PostCard.vue"
 import TagsList from "../tags/TagsList.vue"
+import { usePostsStore } from "@/stores/postsStore"
+import PageLoader from "@/components/PageLoader.vue"
+import { useUserStore } from "@/stores/userStore"
 
 export default {
   data() {
     return {
-      searchValue: ""
+      searchValue: "",
+      isPageLoading: false
     }
   },
   components: {
     PostCard,
-    TagsList
+    TagsList,
+    PageLoader
+  },
+  async mounted() {
+    this.isPageLoading = true
+    await this.postsStore.getAllPosts()
+    this.isPageLoading = false
   },
   computed: {
+    ...mapStores(usePostsStore, useUserStore),
+    allPosts() {
+      return this.postsStore.posts
+    },
+    currentUser() {
+      return this.usersStore.currentUser
+    },
     posts() {
       // мок данные потом подогнать надо под овтет серва
 
@@ -53,7 +75,7 @@ export default {
           id: "123123",
           text: "текст поста",
           title: "пост",
-          tags: ["pizdec", "aga"],
+          tags: ["ai", "vue"],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           viewsCount: 123,
@@ -73,7 +95,7 @@ export default {
           id: "123123",
           text: "текст поста",
           title: "пост 2",
-          tags: ["pizdec"],
+          tags: ["test"],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           viewsCount: 123,
@@ -127,7 +149,7 @@ export default {
       // теги по идее вообще можно нигде не хранить но сказать что хранишь
       // и придумать просто 5 типо часто используемых чтобы по ним фильтр был
 
-      return ["react", "vue", "pizdec", "aga"]
+      return ["label", "vue", "node", "ai"]
     }
   },
   methods: {

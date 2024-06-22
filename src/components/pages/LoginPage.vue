@@ -69,19 +69,34 @@
 </template>
 
 <script>
+import { mapStores } from "pinia"
+import { useUserStore } from "@/stores/userStore"
+
 export default {
   data() {
     return {
       formData: {
         email: "",
         password: ""
-      }
+      },
+      errorMessage: ""
     }
   },
+  computed: {
+    ...mapStores(useUserStore)
+  },
   methods: {
-    handleSubmit() {
-      if (this.formData.email.length && this.formData.password.length) {
-        alert("auth success")
+    async handleSubmit() {
+      const email = this.formData.email.trim()
+      const password = this.formData.password.trim()
+
+      if (email.length && password.length) {
+        try {
+          await this.usersStore.login(email, password)
+          this.$router.push("/posts")
+        } catch (error) {
+          console.log("error is", error)
+        }
       }
     }
   }

@@ -2,16 +2,17 @@ import * as postsService from "@/services/postsService"
 import { defineStore } from "pinia"
 
 export const usePostsStore = defineStore("posts", {
-  state: {
-    posts: null
-  },
+  state: () => ({
+    posts: [],
+    currentPost: null
+  }),
   actions: {
-    async createPost(content, title, creatorId, tagId) {
+    async createPost(content, title, creatorId, cover) {
       const createdPost = await postsService.createPost(
         content,
         title,
         creatorId,
-        tagId
+        cover
       )
       this.addPostLocally(createdPost)
     },
@@ -19,19 +20,27 @@ export const usePostsStore = defineStore("posts", {
       const deletedPost = await postsService.deletePost(postId)
       this.deletePostLocally(deletedPost)
     },
-    async updatePost(postId, content, dislikes, likes, title) {
+    async updatePost(postId, content, dislikes, likes, title, cover) {
       const updatedPost = await postsService.updatePost(
         postId,
         content,
         dislikes,
         likes,
-        title
+        title,
+        cover
       )
-      this.updatePostLocally(updatedPost)
+
+      console.log(updatedPost)
+      this.currentPost = updatedPost
     },
     async getAllPosts() {
       const allPosts = await postsService.getAllPosts()
       this.posts = allPosts
+    },
+    async getPostById(postId) {
+      const post = await postsService.getPostById(postId)
+      console.log("post is", post)
+      this.currentPost = post
     },
     async getPostsByTag(tagId) {
       const filteredPosts = await postsService.getPostsByTag(tagId)
