@@ -28,7 +28,7 @@
       <div class="w-full flex flex-col gap-y-[10px]">
         <div
           v-html="postData.text"
-          v-if="!isEdit"
+          v-if="!isEdit || isModerateStarted"
           style="border: 1px solid gray"
           class="py-[20px] bg-white p-[10px] rounded-[8px]"
         />
@@ -42,7 +42,11 @@
             class="w-[200px]"
             >Редактировать статью</el-button
           >
-          <el-button type="primary" @click="savePost" class="w-[200px]"
+          <el-button
+            type="primary"
+            v-if="!isEdit && postData.text && postData.title"
+            @click="savePost"
+            class="w-[200px]"
             >Создать публикацию</el-button
           >
         </div>
@@ -86,32 +90,130 @@
         </p>
       </div>
 
-      <div class="flex gap-x-[20px]">
+      <div
+        class="flex-col sm:flex-row flex gap-x-[20px] w-full justify-between"
+      >
         <!-- image gen -->
-        <div class="flex flex-col mt-[20px]">
-          <span class="text-[21px] font-bold">Генерация изображения</span>
-          <input
-            class="border-[1px] border-solid border-gray-600 rounded-[6px] px-[10px] py-[5px]"
-            v-model="imagePrompt"
-            type="text"
-            placeholder="Введите тему для картинки"
-          />
-          <div>Результаты по запросу</div>
-          <div @click="generateAiImage">generate image</div>
-          <img v-if="aiImage" :src="aiImage" class="h-[300px] w-[300px]" />
+        <div class="flex flex-col mt-[20px] gap-y-[20px]">
+          <span class="text-[28px] font-bold">Генерация изображения</span>
+
+          <div class="flex flex-col gap-y-[10px]">
+            <contenteditable
+              class="border-[1px] text-[16px] min-h-[43px] outline-none resize-none border-solid border-gray-600 rounded-[2px] px-[10px] py-[5px] w-[400px]"
+              v-model="imagePrompt"
+              tag="div"
+            />
+
+            <div class="flex gap-x-[10px]">
+              <input
+                type="checkbox"
+                :disabled="isImagesLoading || isModerateStarted"
+                id="contextCheckboxImage"
+                v-model="needContextForImage"
+              />
+
+              <label for="contextCheckboxImage" class="cursor-pointer">
+                Учитывать контекст текста поста
+              </label>
+            </div>
+
+            <button
+              v-if="imagePrompt.length"
+              @click="generateAiImages"
+              :disabled="isImagesLoading"
+              class="cursor-pointer bg-green-300 rounded-[6px] py-[10px] px-[5px] text-center"
+            >
+              Сгенерировать изображения
+            </button>
+          </div>
+
+          <div v-if="aiImagesList.length" class="text-[20px]">
+            Результаты по запросу:
+          </div>
+
+          <div
+            v-if="aiImagesList.length && !isImagesLoading"
+            class="flex flex-wrap gap-x-[10px] gap-y-[10px]"
+          >
+            <div v-for="image in aiImagesList" :key="image" class="flex">
+              <img
+                :src="image"
+                class="h-[300px] w-[300px] border-[1px] border-solid"
+              />
+            </div>
+          </div>
+
+          <div
+            v-if="isImagesLoading"
+            class="flex flex-wrap gap-x-[10px] gap-y-[10px]"
+          >
+            <LoadingImage v-for="i in 3" :key="i" />
+          </div>
         </div>
 
         <!-- text gen -->
-        <div class="flex flex-col mt-[20px]">
-          <input
-            v-model="imagePrompt"
-            type="text"
-            placeholder="Введите тему для картинки"
-          />
-          <div>Результаты по запросу</div>
-          <div @click="generateAiImage">generate image</div>
-          <img v-if="aiImage" :src="aiImage" class="h-[300px] w-[300px]" />
+        <div class="flex flex-col mt-[20px] gap-y-[20px]">
+          <span class="text-[28px] font-bold">Генерация текста</span>
+
+          <div class="flex flex-col gap-y-[10px]">
+            <contenteditable
+              class="border-[1px] text-[16px] min-h-[43px] outline-none resize-none h-auto border-solid border-gray-600 rounded-[2px] px-[10px] py-[5px] w-[400px]"
+              v-model="textPrompt"
+              tag="div"
+              placeholder="Например: дополни мой текст"
+            />
+
+            <div class="flex gap-x-[10px]">
+              <input
+                type="checkbox"
+                id="contextCheckbox"
+                :disabled="isTextLoading || isModerateStarted"
+                v-model="needContext"
+              />
+
+              <label for="contextCheckbox" class="cursor-pointer">
+                Учитывать контекст текста поста
+              </label>
+            </div>
+
+            <button
+              v-if="textPrompt.length"
+              :disabled="isTextLoading || isModerateStarted"
+              @click="generateAiText"
+              class="cursor-pointer bg-green-300 rounded-[6px] py-[10px] px-[5px] text-center"
+            >
+              Сгенерировать текст
+            </button>
+          </div>
+
+          <div v-if="aiImagesList.length" class="text-[20px]">
+            Результат по запросу:
+          </div>
+
+          <div
+            v-if="aiGeneratedText.length && !isTextLoading"
+            class="flex flex-wrap gap-x-[10px] gap-y-[10px]"
+          >
+            <div
+              class="flex border-[1px] border-solid border-gray-600 bg-white max-w-[400px] px-[5px] py-[10px] italic leading-[24px] rounded-[6px] w-full whitespace-pre-wrap max-h-[300px] overflow-y-auto"
+            >
+              {{ aiGeneratedText }}
+            </div>
+          </div>
+
+          <div
+            v-if="isTextLoading"
+            class="flex flex-wrap gap-x-[10px] gap-y-[10px]"
+          >
+            <LoadingText />
+          </div>
         </div>
+      </div>
+
+      <div>
+        test text logic
+        <input v-model="textForAnalyse" type="text" placeholder="okol" />
+        <button @click="analysePost">анализировать</button>
       </div>
     </div>
   </div>
@@ -123,10 +225,19 @@ import Editor from "../common/Editor.vue"
 import { usePostsStore } from "@/stores/postsStore"
 import { useUserStore } from "@/stores/userStore"
 import * as AiService from "@/services/aiService"
+import contenteditable from "vue-contenteditable"
+import LoadingImage from "@/components/common/LoadingImage.vue"
+import LoadingText from "@/components/common/LoadingText.vue"
+
+import * as AI_ANALYSES from "@/utils/aiAnalyseResponses"
+import { ElMessage } from "element-plus"
 
 export default {
   components: {
-    Editor
+    Editor,
+    contenteditable,
+    LoadingImage,
+    LoadingText
   },
   data() {
     return {
@@ -136,8 +247,16 @@ export default {
         text: "",
         image: null
       },
-      imagePrompt: "",
-      aiImage: null
+      imagePrompt: "Кот на велосипеде. Стиль - ультра реализм",
+      textPrompt: "",
+      isImagesLoading: false,
+      isTextLoading: false,
+      aiImagesList: [],
+      needContext: false,
+      needContextForImage: false,
+      aiGeneratedText: "",
+      textForAnalyse: "",
+      isModerateStarted: false
     }
   },
   computed: {
@@ -152,13 +271,86 @@ export default {
       this.isEdit = false
     },
     async savePost() {
-      await this.createPost()
+      this.startModerate()
       // this.$router.push("/posts")
     },
-    async generateAiImage() {
-      const image = await AiService.getAiImage(this.imagePrompt)
-      console.log("image is", image)
-      this.aiImage = image
+    async startModerate() {
+      ElMessage({
+        type: "info",
+        message: "Сейчас Vinny проверит ваш пост, нужно немного подождать",
+        showClose: true,
+        duration: 1000
+      })
+
+      this.isModerateStarted = true
+
+      console.log("text", this.postData.text)
+
+      const analyseResult = await AiService.analyseText(this.postData.text)
+
+      if (analyseResult === AI_ANALYSES.AI_OK) {
+        await this.createPost()
+        ElMessage({
+          type: "success",
+          message: "Ваш пост был опубликован, перенаправляю на главную...",
+          showClose: true,
+          duration: 3000
+        })
+
+        setTimeout(() => {
+          this.$router.push("/posts")
+        }, 3000)
+      } else {
+        ElMessage({
+          type: "warning",
+          message: `С вашим постом что-то не так.
+          Такая ошибка возникает тогда,
+          когда пост содержит негативный окрас,
+          либо не содержит смысла.`
+        })
+        this.isModerateStarted = false
+      }
+    },
+    async sussessModeration() {},
+    async generateAiImages() {
+      this.isImagesLoading = true
+
+      let postContext = this.imagePrompt
+
+      if (this.needContextForImage) {
+        postContext =
+          this.imagePrompt +
+          "\nИзображение обязательно должно быть одно. Так же опирайся на этот текст, создавая изображение:" +
+          this.imagePrompt
+      }
+
+      const imagePromises = [
+        AiService.getAiImage(postContext),
+        AiService.getAiImage(postContext),
+        AiService.getAiImage(postContext)
+      ]
+      const promisesResults = await Promise.all(imagePromises)
+
+      this.aiImagesList = promisesResults
+
+      this.isImagesLoading = false
+    },
+    async generateAiText() {
+      this.isTextLoading = true
+
+      let postContext = this.textPrompt
+
+      if (this.needContext) {
+        postContext =
+          this.textPrompt +
+          "\nТак же опирайся на этот текст:" +
+          this.postData.text
+      }
+
+      const textResponse = await AiService.getAiText(postContext)
+
+      this.aiGeneratedText = textResponse
+      this.isTextLoading = false
     },
     handleChangePostImage(event) {
       const file = event.target.files[0]
