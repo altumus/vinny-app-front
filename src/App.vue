@@ -1,5 +1,6 @@
 <template>
-  <div class="flex w-full flex-col">
+  <PageLoader v-if="isPageLoading" />
+  <div v-else class="flex w-full flex-col">
     <NavBar />
     <router-view />
   </div>
@@ -10,16 +11,25 @@ import NavBar from "@/components/NavBar.vue"
 import * as Utils from "@/utils/userHandler"
 import { mapStores } from "pinia"
 import { useUserStore } from "./stores/userStore"
+import PageLoader from "@/components/PageLoader.vue"
 
 export default {
   components: {
-    NavBar
+    NavBar,
+    PageLoader
   },
   computed: {
     ...mapStores(useUserStore)
   },
+  data() {
+    return {
+      isPageLoading: false
+    }
+  },
   async mounted() {
+    this.isPageLoading = true
     await this.initApp()
+    this.isPageLoading = false
   },
   methods: {
     async initApp() {
@@ -41,6 +51,7 @@ export default {
     redirectUnauthorized() {
       const authorizedRoutes = ["/post-creation", "/account"]
       if (authorizedRoutes.includes(this.$route.path)) {
+        this.isPageLoading = false
         this.$router.push("/posts")
       }
     }

@@ -1,7 +1,7 @@
 <template>
   <PageLoader v-if="isLoading" />
   <div
-    v-else
+    v-if="currentPost && !isLoading"
     class="w-full py-[50px] relative px-[100px] min-w-[350px] flex flex-col overflow-hidden"
   >
     <label
@@ -57,7 +57,7 @@
       <div class="flex flex-row gap-[5px] items-center">
         <UserAvatar
           class="w-[24px] h-[24px] object-cover rounded-[100%]"
-          :src="currentPost.creator.avatar"
+          :src="currentPost.creator?.avatar"
         />
         <p class="font-[700] text-[13px]">{{ currentPost.creator.name }}</p>
       </div>

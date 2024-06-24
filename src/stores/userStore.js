@@ -19,8 +19,14 @@ export const useUserStore = defineStore("users", {
       this.currentUser = newUser
       this.setCurrentUser(newUser)
     },
-    async updateUser(avatar, email, hash, name) {
-      const response = await usersService.updateUser(avatar, email, hash, name)
+    async updateUser(id, avatar, email, hash, name) {
+      const response = await usersService.updateUser(
+        id,
+        avatar,
+        email,
+        hash,
+        name
+      )
       this.currentUser = response
     },
     async removeUser(userId) {

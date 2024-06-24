@@ -41,15 +41,14 @@ export async function login(email, hash) {
   }
 }
 
-export async function updateUser(avatar, email, hash, name) {
+export async function updateUser(id, avatar, email, hash, name) {
   try {
     const response = await apiClient.patch("update-user", {
-      data: {
-        avatar: avatar,
-        email: email,
-        hash: hash,
-        name: name
-      }
+      avatar: avatar,
+      email: email,
+      hash: hash,
+      name: name,
+      id: id
     })
 
     return response.data

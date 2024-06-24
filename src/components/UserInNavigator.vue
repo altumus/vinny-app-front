@@ -2,12 +2,6 @@
   <div
     class="flex w-full gap-x-[10px] items-center hover:bg-blue-300 px-[10px] py-[5px] rounded-[8px]"
   >
-    <img
-      v-if="user?.avatar"
-      :src="user.avatar"
-      class="h-[30px] w-[30px] rounded-full border-[3px] border-solid border-white"
-    />
-
     <UserAvatar
       class="h-[30px] w-[30px] rounded-full border-[3px] border-solid border-white"
       :src="user.avatar"

@@ -33,6 +33,10 @@ export const usePostsStore = defineStore("posts", {
       console.log(updatedPost)
       this.currentPost = updatedPost
     },
+    async getMyPosts(creatorId) {
+      const myPosts = await postsService.getMyPosts(creatorId)
+      this.posts = myPosts
+    },
     async getAllPosts() {
       const allPosts = await postsService.getAllPosts()
       this.posts = allPosts
@@ -54,7 +58,7 @@ export const usePostsStore = defineStore("posts", {
 
       if (index === -1) return
 
-      this.posts.slice(index, 1)
+      this.posts.splice(index, 1)
     },
     updatePostLocally(data) {
       const postIndex = this.posts.findIndex((post) => post.id === data.id)

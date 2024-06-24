@@ -76,6 +76,20 @@ export async function getPostById(postId) {
   }
 }
 
+export async function getMyPosts(creatorId) {
+  try {
+    const response = await apiClient.get("my-posts", {
+      params: {
+        creatorId: creatorId
+      }
+    })
+
+    return response.data
+  } catch (error) {
+    console.log("error while get my posts", error)
+  }
+}
+
 export async function getPostsByTag(tagId) {
   try {
     const response = await apiClient.get("posts-by-tag", {
